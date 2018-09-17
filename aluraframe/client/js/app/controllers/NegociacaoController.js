@@ -13,22 +13,13 @@ class NegociacaoController{
 	adiciona(event){
 		event.preventDefault(); //cancela a submissao dos dados do formulario para capturar esses dados
 
-		//arrow function: a flecha pode retirar a palavra reservada function. Pode emitir o bloco {} se tiver uma unica instrução. Pode tirar o ; tbm
-		let data = new Date(...this._inputData.value.split('-').map((item, indice) =>  item - indice % 2));
+		let helper = new DateHelper();
+		
+		//cria uma negociacao com os seus parametros
+		let negociacao = new Negociacao (helper.textoParaData(this._inputData.value), this._inputQuantidade.value,this._inputValor.value);
 
-		/*código equivalente*/
-		// let data = new Date(...this._inputData.value.split('-').map(function(item, indice)  { 
-			
-		// 	return item - indice % 2;
-		// }));
-		///console.log(data);
-
-		let negociacao = new Negociacao (data, this._inputQuantidade.value,this._inputValor.value);
-		console.log(negociacao);
-
-		let diaMesAno = negociacao.data.getDate() + "/" + (negociacao.data.getMonth()+1) + "/" + negociacao.data.getFullYear();
-		console.log(diaMesAno);
-
+		console.log(helper.dataParaTexto(negociacao.data));
+		
 		
 	}
 
