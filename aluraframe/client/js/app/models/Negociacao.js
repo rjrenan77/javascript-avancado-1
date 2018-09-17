@@ -1,25 +1,29 @@
 class Negociacao{
 
 	constructor(data, quantidade, valor){
-		this._data = data;
+		this._data = new Date(data.getTime());//programação defensiva, retorno um outro objeto para que o interno não seja manipulado
 		this._quantidade = quantidade;
 		this._valor = valor;
+
+		Object.freeze(this); //congela o objeto instaciado para ficar sem permissao de acesso 
 	}
 
-	getVolume() {
+	get volume() {
 		return this._quantidade * this._valor;
 	}
 
-	getData() {
-		return this._data;
+	get data() {
+		return new Date(this._data.getTime()); //programação defensiva, retorno um outro objeto para que o interno não seja manipulado
 	}
 
-	getQuantidade() {
+	get quantidade() {
 		return this._quantidade;
 	}
 
-	getValor() {
+	get valor() {
 		return this._valor;
 	}
 
 }
+
+/**Notas:  get valor faz com que o método seja acessada como se fosse uma propriedade (ex. n1.quantidade)*/
