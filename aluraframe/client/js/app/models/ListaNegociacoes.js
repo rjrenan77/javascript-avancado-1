@@ -10,7 +10,8 @@ class ListaNegociacoes{
 	}
 
 	get negociacoes(){
-		return this._negociacoes;
+		//retornando apenas uma copia do array para que ninguem possa alterar
+		return [].concat(this._negociacoes);
 	}
 
 }
