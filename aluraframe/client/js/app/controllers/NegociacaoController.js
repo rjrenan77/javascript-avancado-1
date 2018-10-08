@@ -24,7 +24,7 @@ class NegociacaoController{
 	}
 
 	adiciona(event){
-	
+		
 		event.preventDefault(); //cancela a submissao dos dados do formulario para capturar esses dados
 		this._listaNegociacoes.adiciona(this._criaNegociacao());
 		this._mensagem.texto = 'Negociação adicionada com sucesso!';
@@ -48,48 +48,77 @@ class NegociacaoController{
 	importaNegociacoes(){
 
 		
-		let xhr =  new XMLHttpRequest();
+		let service = new NegociacaoService();
 
-		xhr.open('GET', 'negociacoes/semana');
+		Promise.all([service.obterNegociacoesDaSemana(),
+					service.obterNegociacoesDaSemanaAnterior(),
+					service.obterNegociacoesDaSemanaRetrasada()]
+					).then(negociacoes=>{
+						negociacoes
+						.reduce((arrayAchatado, array) => arrayAchatado.concat(array), [])
+						.forEach(negociacao=>this._listaNegociacoes.adiciona(negociacao));
+						this._mensagem.texto
+					}).catch(erro => this._mensagem.texto = erro);
+;
 
-		/*configurações*/
-		xhr.onreadystatechange = () => {
-			
-			/*
-			0: requisição ainda não iniciada
+		/**
 
-			1: conexão com o servidor estabelecida
+		service.obterNegociacoesDaSemana().then(negociacoes => {
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))
+			this._mensagem.texto = 'Negociações da semana obtida com sucesso';
+		})
+		.catch(erro => this._mensagem.texto = erro);
 
-			2: requisição recebida
+		service.obterNegociacoesDaSemanaAnterior().then(negociacoes => {
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))
+			this._mensagem.texto = 'Negociações da semana obtida com sucesso';
+		})
+		.catch(erro => this._mensagem.texto = erro);
 
-			3: processando requisição
+		service.obterNegociacoesDaSemanaRetrasada().then(negociacoes => {
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao))
+			this._mensagem.texto = 'Negociações da semana obtida com sucesso';
+		})
+		.catch(erro => this._mensagem.texto = erro);
 
-			4: requisição está concluída e a resposta está pronta
-			*/
 
-			if(xhr.readyState == 4){
-				if(xhr.status == 200){
-					console.log('obtendo as negociações do servidor...');
-					console.log(xhr.responseText);
+		**/
 
-					JSON.parse(xhr.responseText) //transformando JSON em array
-					.map((objeto)=>new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)) // cada objeto retornado do json eu converto em um array de negociacao
-					.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao)); //percorro cada item e adiciono na lista de Negociacoes
-
-					this._mensagem.texto = 'Negociações importadas com sucesso!';
-
-					console.log('feito!');
-				}else{
-					console.log('Não foi possível obter as negociações do servidor!');
-					console.log(xhr.responseText);
-					this._mensagem.texto = "Não foi possível obter as negociações.";
-				}
+		/*service.obterNegociacoesDaSemana((erro, negociacoes) =>{
+			if(erro){
+				this._mensagem.texto = erro;
+				return;
 			}
 
-		};
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+			
 
-		xhr.send();
-	
+			service.obterNegociacoesDaSemanaAnterior((erro, negociacoes) =>{
+				if(erro){
+					this._mensagem.texto = erro;
+					return;
+				}
+
+				negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+				
+
+				service.obterNegociacoesDaSemanaRetrasada((erro, negociacoes) =>{
+					if(erro){
+						this._mensagem.texto = erro;
+						return;
+					}
+
+					negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+					
+
+				});
+
+			});
+
+		});*/
+
+		
+		
 	}
 
 }
